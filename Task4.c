@@ -7,7 +7,7 @@ int main(void) {
 	int x;
 	struct list l = list_new();
 	while (c != '\n') {
-		scanf_s("%c", &c);
+		scanf("%c", &c);
 		if (c == '(') list_push(&l, 0);
 		if (c == '{') list_push(&l, 1);
 		if (c == ')') {
