@@ -40,7 +40,7 @@ void list_remove(List* l, int a) {
 	Node* j;
 	while (i != NULL) {
 		if (i->value == a) {
-			if (last = NULL) l->beg = i->next;
+			if (last == NULL) l->beg = i->next;
 			else last->next = i->next;
 			j = i;
 			i = i->next;
