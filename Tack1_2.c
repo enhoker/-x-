@@ -1,86 +1,71 @@
-#include <stdio.h> 
 #include <stdlib.h> 
+#include <stdio.h> 
 
-typedef struct node { 
-int value; 
-struct node* prev; 
-struct node* next; 
-} node; 
+typedef struct Node {
+	int value;
+	struct Node* next;
+} Node;
 
-typedef struct list { 
-node* beg; 
-node* fin; 
-} list; 
+typedef struct List {
+	Node* beg;
+} List;
 
-list list_new(void) { 
-list a; 
-a.beg = NULL; 
-a.fin = NULL; 
-return a; 
-} 
-
-int list_delete(list* l) { 
-node* a = l->beg; 
-node* b; 
-if (a == NULL) { 
-return 1; 
-} 
-while (a != NULL) { 
-b = a; 
-a = b->next; 
-free(&b); 
-} 
-free (l); 
-} 
-
-int list_push (list* l, int a) { 
-if (l == NULL) { 
-return 1; 
-}; 
-node q; 
-q.value = a; 
-q.prev = l->fin; 
-q.next = NULL; 
-l->fin->next = &q; 
-l->fin = &q; 
-return 0; 
-} 
-
-int list_pop (list* l, int* x) { 
-if (l == NULL) { 
-return 1; 
-}; 
-*x = l->fin->value; 
-node* s = l->fin; 
-l->fin->prev->next = NULL; 
-l->fin = l->fin->prev; 
-free(s); 
-return 0; 
-} 
-
-int list_unshift (list* l, int a) { 
-if (l == NULL) { 
-return 1; 
-}; 
-node q; 
-q.value = a; 
-q.prev = NULL; 
-q.next = l->beg; 
-l->beg->prev = &q; 
-l->beg = &q; 
-return 0; 
-} 
-
-int list_shift (list* l, int* x) { 
-if (l == NULL) { 
-return 1; 
-}; 
-*x = l->beg->value; 
-node* s = l->beg; 
-l->beg->next->prev = NULL; 
-l->beg = l->beg->next; 
-free(s); 
-return 0; 
+List list_new(void) {
+	List a;
+	a.beg = NULL;
+	return a;
 }
- 
-Иное
+
+void list_delete(List* l) {
+	Node* a = l->beg;
+	Node* b;
+	while (a != NULL) {
+		b = a;
+		a = b->next;
+		free(&b);
+	}
+	free(l);
+}
+
+void insert(List* l, int a) {
+	Node q;
+	q.value = a;
+	q.next = l->beg;
+	l->beg = &q;
+}
+
+void list_remove(List* l, int a) {
+	Node* last = NULL;
+	Node* i = l->beg;
+	Node* j;
+	while (i != NULL) {
+		if (i->value == a) {
+			if (last == NULL) l->beg = i->next;
+			else last->next = i->next;
+			j = i;
+			i = i->next;
+			free(&j);
+		}
+		else {
+			last = i;
+			i = i->next;
+		}
+
+	}
+}
+
+void list_print(List* l) {
+	Node* i = l->beg;
+	while (i != NULL) {
+		printf("%d, ", i->value);
+	}
+}
+
+List* first_integers(int N) {
+	List temp = list_new();
+	int i;
+	for (int i = N; i > 0; --i) {
+		insert(&temp, i);
+	}
+	return &temp;
+}
