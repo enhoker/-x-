@@ -1,39 +1,48 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+//Структура "элемент списка"
 typedef struct Node {
+	//Значение в элементе
 	int value;
+	//Указатель на следующий элемент
 	struct Node* next;
 } Node;
 
+//Структура "односвязный список"
 typedef struct List {
+	//Указатель на первый элемент списка (равный NULL для пустого списка)
 	Node* beg;
 } List;
 
-List list_new(void) {
-	List a;
-	a.beg = NULL;
+//Создание нового пустого списка
+List* list_new(void) {
+	List* a = malloc(sizeof(void*));
+	a->beg = NULL;
 	return a;
 }
 
+//Удаление списка
 void list_delete(List* l) {
 	Node* a = l->beg;
 	Node* b;
 	while (a != NULL) {
 		b = a;
 		a = b->next;
-		free(&b);
+		free(b);
 	}
-	free(&l);
+	free(l);
 }
 
+//Добавление элемента а в список l
 void insert(List* l, int a) {
-	Node q;
-	q.value = a;
-	q.next = l->beg;
-	l->beg = &q;
+	Node* q = malloc(sizeof(int) + sizeof(void*));
+	q->value = a;
+	q->next = l->beg;
+	l->beg = q;
 }
 
+//Удаление из списка l всех элементов со значением а
 void list_remove(List* l, int a) {
 	Node* last = NULL;
 	Node* i = l->beg;
@@ -44,7 +53,7 @@ void list_remove(List* l, int a) {
 			else last->next = i->next;
 			j = i;
 			i = i->next;
-			free(&j);
+			free(j);
 		}
 		else {
 			last = i;
@@ -54,15 +63,10 @@ void list_remove(List* l, int a) {
 	}
 }
 
+//Печать списка
 void list_print(List* l) {
 	Node* i = l->beg;
 	while (i != NULL) {
 		printf("%d, ", i->value);
 	}
-}
-
-void delete_first(List* l) {
-	Node* a = l->beg;
-	l->beg = (l->beg)->next;
-	free(&a);
 }
