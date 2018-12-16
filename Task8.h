@@ -1,17 +1,18 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "turn.h"
 
-struct node
+struct Point
 {
 	int data; // ключ
 	float value; // значение
-	struct node * left;
-	struct node * right;
+	struct Point * left;
+	struct Point * right;
 };
 
 struct tree
 {
-	struct node * root;   // Указатель на корень дерева
+	struct Point * root;   // Указатель на корень дерева
 	int count;            // Количество узлов в дереве
 };
 
@@ -28,50 +29,50 @@ struct tree * tree_create(void)
 // Поиск вершины с ключом item в дереве search_tree
 int bin_search(const struct tree * search_tree, int item)
 {
-	const struct node * search_node;
-	search_node = search_tree->root;
+	const struct Point * search_Point;
+	search_Point = search_tree->root;
 	for (;;)
 	{
-		if (search_node == NULL) return 0;
-		else if (item == search_node->data) return 1;
-		else if (item > search_node->data) search_node = search_node->right;
-		else search_node = search_node->left;
+		if (search_Point == NULL) return 0;
+		else if (item == search_Point->data) return 1;
+		else if (item > search_Point->data) search_Point = search_Point->right;
+		else search_Point = search_Point->left;
 	}
 }
 
 // Вставка элемента в дерево
 int insert(struct tree * search_tree, int item, float val)
 {
-	struct node * search_node, **new;
+	struct Point * search_Point, **new;
 	new = &search_tree->root;
-	search_node = search_tree->root;
+	search_Point = search_tree->root;
 	for (;;)
-	{	
-		if (search_node == NULL) // Если мы нашли, куда вставлять вершину - вставим её
+	{
+		if (search_Point == NULL) // Если мы нашли, куда вставлять вершину - вставим её
 		{
-			search_node = *new = malloc(2 * sizeof(void *) + sizeof(int) + sizeof(float));
-			if (search_node != NULL)
+			search_Point = *new = malloc(2 * sizeof(void *) + sizeof(int) + sizeof(float));
+			if (search_Point != NULL)
 			{
-				search_node->data = item;
-				search_node->value = val;
-				search_node->left = search_node->right = NULL;
+				search_Point->data = item;
+				search_Point->value = val;
+				search_Point->left = search_Point->right = NULL;
 				search_tree->count++;
 				return 0; // Возвращаем 0, если функция выполнилась без ошибок 
 			}
 			else return 1; // Возвращаем 1, если произошла какая-то непонятная ошибка
 		}
-		else if (item == search_node->data) return 2; // Если значение продублировалось - возвращаем код ошибки 2
-		
+		else if (item == search_Point->data) return 2; // Если значение продублировалось - возвращаем код ошибки 2
+
 		// Если ещё не нашли - продолжаем углубляться в дерево
-		else if (item > search_node->data)
+		else if (item > search_Point->data)
 		{
-			new = &search_node->right;
-			search_node = search_node->right;
+			new = &search_Point->right;
+			search_Point = search_Point->right;
 		}
 		else
 		{
-			new = &search_node->left;
-			search_node = search_node->left;
+			new = &search_Point->left;
+			search_Point = search_Point->left;
 		}
 	}
 }
@@ -79,7 +80,7 @@ int insert(struct tree * search_tree, int item, float val)
 // Удаление вершины по ключу
 int delete(struct tree * search_tree, int ** item)
 {
-	struct node ** q, *z;
+	struct Point ** q, *z;
 
 	q = &search_tree->root;
 	z = search_tree->root;
@@ -104,7 +105,7 @@ int delete(struct tree * search_tree, int ** item)
 	if (z->right == NULL) *q = z->left;
 	else
 	{
-		struct node * y = z->right;
+		struct Point * y = z->right;
 		if (y->left == NULL)
 		{
 			y->left = z->left;
@@ -112,7 +113,7 @@ int delete(struct tree * search_tree, int ** item)
 		}
 		else
 		{
-			struct node * x = y->left;
+			struct Point * x = y->left;
 			while (x->left != NULL)
 			{
 				y = x;
@@ -130,12 +131,12 @@ int delete(struct tree * search_tree, int ** item)
 }
 
 // Удаление отдельного узла дерева и его потомков
-void destroy(struct node * search_node)
+void destroy(struct Point * search_Point)
 {
-	if (search_node == NULL) return;
-	destroy(search_node->left);
-	destroy(search_node->right);
-	free(search_node);
+	if (search_Point == NULL) return;
+	destroy(search_Point->left);
+	destroy(search_Point->right);
+	free(search_Point);
 }
 
 // Полное удаление дерева
@@ -146,8 +147,26 @@ void destroy_tree(struct tree * search_tree)
 }
 
 // Обход в глубину - через рекурсию
-void DFS(struct node * search_node) {
-	printf("(%d, %f), ", search_node->data, search_node->value);
-	DFS(search_node->left);
-	DFS(search_node->right);
+void DFS(struct Point * search_Point) {
+	printf("(%d, %f), ", search_Point->data, search_Point->value);
+	DFS(search_Point->left);
+	DFS(search_Point->right);
+}
+
+// Обход в ширину - через очередь
+void BFS(struct tree search_tree) {
+	list * l = list_new();
+	struct Point * a = search_tree.root;
+	list_push(l, a);
+	int i = 0;
+	for (i = 0; i < search_tree.count; i++) {
+		list_shift(l, &a);
+		printf("(%d, %f), ", a->data, a->value);
+		list_push(l, a->left);
+		list_push(l, a->right);
+	}
+}
+
+int main() {
+	return 0;
 }
