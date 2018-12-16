@@ -16,10 +16,10 @@ typedef struct List {
 } List;
 
 //Создание нового пустого списка
-List list_new(void) {
+List* list_new(void) {
 	List* a = malloc(sizeof(void*));
 	a->beg = NULL;
-	return *a;
+	return a;
 }
 
 //Удаление списка
@@ -68,5 +68,6 @@ void list_print(List* l) {
 	Node* i = l->beg;
 	while (i != NULL) {
 		printf("%d, ", i->value);
+		i = i->next;
 	}
 }
