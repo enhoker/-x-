@@ -166,7 +166,3 @@ void BFS(struct tree search_tree) {
 		list_push(l, a->right);
 	}
 }
-
-int main() {
-	return 0;
-}
